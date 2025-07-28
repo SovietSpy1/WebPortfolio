@@ -1,0 +1,492 @@
+﻿
+<!DOCTYPE html>
+
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0 maximum-scale = 1.0 minimum-scale = 1.0">
+    <link href ="{{ url_for('static', filename='css/fontawesome.css') }}" rel = "stylesheet">
+    <link href = "{{ url_for('static', filename='css/brands.css') }}" rel = "stylesheet">
+    <link href = "{{ url_for('static', filename='css/solid.css') }}" rel = "stylesheet">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,1,0&icon_names=arrow_forward" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"/>
+    <link rel="stylesheet" type='text/css' href="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/devicon.min.css" />
+    <link rel = "stylesheet" href = "{{ url_for('static', filename='style.css') }}">
+    <link rel = "icon" href = "static/images/game-engine-transparent.png"/>
+    <title>Biggar Code</title>
+</head>
+<body>
+    <nav id = "navbar">
+        <span class = navCon>
+            <span class = "navBut activeBut" id = "homeBut" data-target = "home" onclick = "Swap(this.dataset.target)">Home</span>
+        </span>
+        <span class = navCon>
+            <span class = "navBut" id = "aboutBut" data-target = "about" onclick = "Swap(this.dataset.target)">About</span>
+        </span>
+        <span class = navCon>
+            <span class = "navBut" id = "projectsBut" data-target = "projects" onclick = "Swap(this.dataset.target)">Projects</span>
+        </span>
+        <span class = navCon> 
+            <span class = "navBut" id = "contactBut" data-target = "contact" onclick = "Swap(this.dataset.target)">Contact</span>
+        </span>
+    </nav>
+    <div id = "contacts">
+        <span class = "logoCon">
+            <a href  = "mailto::michaelbiggar2005@outlook.com" target = "_blank"><i class = "fas fa-envelope"></i></a>
+        </span>
+        <span class="logoCon">
+            <a href  = "https://www.linkedin.com/in/michael-biggar-287b95272/" target = "_blank"><i class = "fab fa-linkedin-in"></i></a>
+        </span>
+        <span class="logoCon">
+            <a href  = "https://github.com/SovietSpy1" target = "_blank"><i class = "fab fa-github"></i></a>
+        </span>
+        <span class="logoCon">
+            <a href  = "https://sovietspy420.itch.io/" target = "_blank"><i class = "fas fa-gamepad"></i></a>
+        </span>
+    </div>
+    <div id = "border"></div>
+    <div class = "section shown non-clipped active" id = "home">
+        <video autoplay muted>
+            <source src = "{{ url_for('static', filename='images/smokemp4.mp4') }}" type = "video/mp4"/>
+        </video>
+        <div class = "main-content">
+            <div class = "container">
+                <h1 id = "i1">I'm Michael</h1>
+                <div id = "typewriter"></div>
+            </div>
+        </div>
+   </div>
+   <div class = "section" id = "projects">
+        <div class = "top"> </div>
+        <div class = "middle">
+            <div class = "" id = "card-expanded-container">
+                <div class = "card-expanded" id = "store-backend" onclick = "CloseCard(id)">
+                    <h1 class = "intro">Store Backend</h1>
+                    <button class = "material-symbols-rounded card-button">arrow_forward</button>
+                    <div class = "card-skills">
+                        <span class = "tech-header">Technologies: </span>
+                        <div class = "badge apis">Flask</div>
+                        <div class = "badge back">Python</div>
+                        <div class = "badge apps">Docker</div>
+                        <div class = "badge conc">JWT Verification</div>
+                        <div class = "badge algo">Hashing</div>
+                        <div class = "badge back">SQL</div>
+                    </div>     
+                    <div class = "scrollable">
+                        <h3>Developed a modular store backend composed of five Flask-based microservices:</h3>   
+                        <ul class = "microservices">
+                            <li><span class = "highlight">Users</span> – Handles user registration, salted password hashing, and secure JWT-based authentication.</li>
+                            <li><span class = "highlight">Products</span> – Create, edit, and search for products with fuzzy matching.</li>
+                            <li><span class = "highlight">Orders</span> – Process orders with multiple items, check stock, and calculate totals.</li>
+                            <li><span class = "highlight">Search </span> – Query logs by product name or category, showing product history.</li>
+                            <li><span class = "highlight">Logs</span> – Centralized logging service with permission-based access for viewing user/product event histories.</li>
+                        </ul>
+                        <p>Each service runs in its own Docker container, coordinated with Docker Compose, allowing for isolated development and easy deployment. JWTs are signed using HMAC SHA-256 and verified across services to ensure secure, role-based access control.</p>
+                    </div>
+                </div>
+                <div class = "card-expanded" id = "portfolio" onclick = "CloseCard(id)">
+                    <h1 class = "intro">Portfolio Website</h1>
+                    <button class = "material-symbols-rounded card-button">arrow_forward</button>
+                    <div class = "card-skills">
+                        <span class = "tech-header">Technologies: </span>
+                        <div class = "badge fron">HTML</div>
+                        <div class = "badge apis">Flask</div>
+                        <div class = "badge back">Python</div>
+                        <div class = "badge apps">Google Cloud</div>
+                        <div class = "badge fron">JS</div>
+                        <div class = "badge apis">NGINX</div>
+                        <div class = "badge apis">CertBot</div>
+                        <div class = "badge apis">Gunicorn</div>
+                    </div>     
+                    <div class = "scrollable">
+                        <p>Built and deployed a personal portfolio website to showcase my projects and skills. This project allowed me to gain hands-on experience with frontend development using HTML, CSS, and JavaScript, with a strong focus on layout, animation, and interactive design</p>   
+                        <h3>The backend is powered by a Flask application, served through a production-grade deployment stack:</h3>
+                        <ul class = "microservices">
+                            <li>Hosted on a <span class = "highlight">Google Cloud</span> virtual machine</li>
+                            <li>Uses <span class = "highlight">NGINX</span> as a reverse proxy to a Gunicorn WSGI server</li>
+                            <li>Secured with <span class = "highlight">HTTPS</span> via Certbot and a custom domain</li>
+                        </ul>
+                        <p>Throughout the process, I deepened my understanding of server configuration, cloud infrastructure, and modern web deployment practices. This project also includes a custom contact form that uses JavaScript fetch() to post data asynchronously to the Flask backend — avoiding page reloads and improving UX.</p>
+                    </div>
+                </div>
+            </div>
+            <h1 class = "intro">Welcome To My Portfolio</h1>
+            <div class = "main-content">
+                <p>I've worked on a range of software projects — from puzzle platformers and 3D action games to full-stack web applications. I enjoy exploring different areas of software engineering, whether it's graphics programming, game development, or building scalable web systems. My latest and most ambitious project is a fully custom 3D game engine, built from the ground up in C++ using Direct3D 11. Along the way, I've also gained experience with tools and technologies like C#, Python, Unity, Visual Studio, Docker, Git, JavaScript, Flask, SQL, and cloud platforms, allowing me to approach challenges from both frontend and backend perspectives.</p>
+                <div class="container">
+                    <div class = "swiper">
+                        <div class = "slider-wrapper">
+                            <div class = "swiper-wrapper">
+                                <div class="swiper-slide card-item">
+                                    <a class = "card-link openable" name = "store-backend" onclick = "OpenCard(name)">
+                                        <img src = "{{ url_for('static', filename='images/projects/backend-product-manager.png') }}" class = "card-image">
+                                        <div class = "card-skills">
+                                            <div class = "badge apis">Flask</div>
+                                            <div class = "badge back">Python</div>
+                                            <div class = "badge apps">Docker</div>
+                                            <div class = "badge conc">JWT Verification</div>
+                                            <div class = "badge algo">Hashing</div>
+                                            <div class = "badge back">SQL</div>
+                                        </div>
+                                        <div class = "card-bottom">
+                                            <span class = "material-symbols-rounded card-button">arrow_forward</span>
+                                            <div class = "card-title">
+                                                Store Backend
+                                            </div>
+                                        </div>
+                                        
+                                    </a>
+                                </div>
+                                <div class="swiper-slide card-item">
+                                    <a class = "card-link openable" name = "portfolio" onclick = "OpenCard(name)">
+                                        <img src = "{{ url_for('static', filename='images/projects/Portfolio.png') }}" class = "card-image">
+                                        <div class = "card-skills">
+                                            <div class = "badge apis">Flask</div>
+                                            <div class = "badge back">Python</div>
+                                            <div class = "badge fron">HTML</div>
+                                            <div class = "badge fron">JS</div>
+                                            <div class = "badge fron">CSS</div>
+                                            <div class = "badge conc">Web Design</div>
+                                            <div class = "badge apps">Google Cloud</div>
+                                            <div class = "badge apis">Nginx</div>
+                                            <div class = "badge apis">Gunicorn</div>
+                                            <div class = "badge apps">Github</div>
+                                        </div>
+                                        <div class = "card-bottom">
+                                            <span class = "material-symbols-rounded card-button">arrow_forward</span>
+                                            <div class = "card-title">
+                                                Portfolio
+                                            </div>
+                                        </div>
+                                        
+                                    </a>
+                                </div>
+                                <div class="swiper-slide card-item">
+                                    <a href = "https://sovietspy420.itch.io/portal-rush" target = "_blank" class = "card-link">
+                                        <img src = "{{ url_for('static', filename='images/projects/portal_rush.png') }}"class = "card-image">
+                                        <div class = "card-skills">
+                                            <div class = "badge back">C#</div>
+                                            <div class = "badge apps">Unity</div>
+                                            <div class = "badge algo">Physics</div>
+                                            <div class = "badge grap">HLSL</div>
+                                            <div class = "badge grap">VFX</div>
+                                            <div class = "badge grap">Textures</div>
+                                        </div>
+                                        <div class = "card-bottom">
+                                            <span class = "material-symbols-rounded card-button">arrow_forward</span>
+                                            <div class = "card-title">
+                                                Portal Rush
+                                            </div>
+                                        </div>
+                                        
+                                    </a>
+                                </div>
+                                <div class="swiper-slide card-item">
+                                    <a href = "https://sovietspy420.itch.io/escape-velocity" target = "_blank" class = "card-link">
+                                        <img src = "{{ url_for('static', filename='images/projects/escape_velocity.png') }}" class = "card-image">
+                                        <div class = "card-skills">
+                                            <div class = "badge back">C#</div>
+                                            <div class = "badge apps">Unity</div>
+                                            <div class = "badge grap">Paticle Systems</div>
+                                            <div class = "badge conc">Animations</div>
+                                            <div class = "badge algo">Systems</div>
+                                            <div class = "badge algo">Gameplay</div>
+                                        </div>
+                                        <div class = "card-bottom">
+                                            <span class = "material-symbols-rounded card-button">arrow_forward</span>
+                                            <div class = "card-title">
+                                                Escape Velocity
+                                            </div>
+                                        </div>
+                                    </a>
+                                </div>
+                                <div class="swiper-slide card-item">
+                                    <a href = "https://sovietspy420.itch.io/game-engine-demo" target = "_blank" class = "card-link">
+                                        <img src = "{{ url_for('static', filename='images/projects/game-engine.png') }}" class = "card-image">
+                                        <div class = "card-skills">
+                                            <div class = "badge back">C++</div>
+                                            <div class = "badge grap">HLSL</div>
+                                            <div class = "badge apis">D3D11</div>
+                                            <div class = "badge apps">Win32</div>
+                                            <div class = "badge grap">Compute Shaders</div>
+                                            <div class = "badge grap">Texturing</div>
+                                            <div class = "badge algo">Matricies</div>
+                                            <div class = "badge algo">Physics</div>
+                                            <div class = "badge grap">Lighting</div>
+                                        </div>
+                                        <div class = "card-bottom">
+                                            <span class = "material-symbols-rounded card-button">arrow_forward</span>
+                                            <div class = "card-title">
+                                                Graphics Engine
+                                            </div>
+                                        </div>
+                                    </a>
+                                </div>
+                                <div class="swiper-slide card-item">
+                                    <a href = "https://sovietspy420.itch.io/spartasoft-studio-prototype-dash-clash"target = "_blank" class = "card-link">
+                                        <img src = "{{ url_for('static', filename='images/projects/dash-clash.png') }}" class = "card-image">
+                                        <div class = "card-skills">
+                                            <div class = "badge back">C#</div>
+                                            <div class = "badge apps">Unity</div>
+                                            <div class = "badge algo">Gameplay</div>
+                                            <div class = "badge conc">Networking</div>
+                                            <div class = "badge algo">Systems</div>
+                                        </div>
+                                        <div class = "card-bottom">
+                                            <span class = "material-symbols-rounded card-button">arrow_forward</span>
+                                            <div class = "card-title">
+                                                Dash Clash
+                                            </div>
+                                        </div>
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="swiper-pagination"></div>
+                            <div class="swiper-slide-button swiper-button-prev"></div>
+                            <div class="swiper-slide-button swiper-button-next"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class = "bottom"></div>
+   </div>
+    <div class = "section" id = "about">
+        <div class = "top"></div>
+        <div class = "middle">
+            <h1 class = "intro">About Me</h1>
+            <div class = "a-m">
+                <div class = "headshot-holder desktop">
+                    <img src = "{{ url_for('static', filename='images/campus.jpg') }}"type = "images/jpg" class = "headshot">
+                </div>
+                <div class = "main-content">
+                    <div class = "desktop">
+                        <h1 class = "name">Michael T. Biggar</h1>
+                        <h2>Software Engineer</h2>
+                    </div>
+                    <div class = "mobile">
+                        <div class = "headshot-holder">
+                            <img src = "{{ url_for('static', filename='images/campus.jpg') }}" type = "images/jpg" class = "headshot">
+                        </div>
+                        <div class = "introHolder">
+                            <h1 class = "name">Michael T. Biggar</h1>
+                            <h2>Software Engineer</h2>
+                        </div>
+                    </div>
+                    <p>Hey! I’m Michael Biggar — a computer science student at MSU and all-around tech enthusiast who loves building interactive experiences, whether that’s crafting a game mechanic or spinning up a web app.</p>
+                    <p>I’ve spent time working with all kinds of tools and languages like C++, Python, Java, SQL, HTML/CSS, and even Bash, and I use Git pretty much every day.</p>
+                    <p>I’ve dived into graphics programming with Direct3D 11, built games in Unity, and worked on full-stack web development using Flask, JavaScript, and Google Cloud.</p>
+                    <p>I really enjoy problem-solving — whether it’s putting together a rendering pipeline or building out a backend that actually scales.</p>
+                    <p>Outside of coding, I like staying active (I used to wrestle competitively), hanging out with my fraternity brothers at Triangle, and playing or making games in my free time.</p>
+                    <p>I’m always experimenting with new ideas and projects — just trying to learn as much as I can and have fun with it along the way.</p>
+                    <a href = "{{ url_for('static', filename='images/VmockResume.pdf') }}" class = "resume" download> Download Resume</a>
+                </div>
+            </div>
+            <div class="stats-section">
+                <div class="stat-card">
+                    <h3>My Journey</h3>
+                    <div class="stat-item">
+                        <div class="stat-icon">💼</div>
+                        <div class="stat-label">Years Experience</div>
+                        <div class="stat-value">3+</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-icon">💻</div>
+                        <div class="stat-label">Projects</div>
+                        <div class="stat-value">30+</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-icon">📑</div>
+                        <div class="stat-label">MSU</div>
+                        <div class="stat-value">4.0</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-icon">📘</div>
+                        <div class="stat-label">Hudsonville</div>
+                        <div class="stat-value">4.08</div>
+                    </div>
+                    
+                </div>
+
+                <div class="stat-card">
+                    <h3>My Skills</h3>
+                    <div class="skills-grid">
+                        <div class="skill-item">
+                            <i class="devicon-cplusplus-plain skill-icon back"></i>
+                        </div>
+                        <div class="skill-item">
+                            <i class="devicon-csharp-plain skill-icon back"></i>
+                        </div>
+                        <div class="skill-item">
+                            <i class="devicon-javascript-plain skill-icon fron"></i>
+                        </div>
+                        <div class="skill-item">
+                            <i class="devicon-css3-plain skill-icon fron"></i>
+                        </div>
+                        <div class="skill-item">
+                            <i class="devicon-googlecloud-plain skill-icon apps" ></i>
+                        </div>
+                        <div class="skill-item">
+                            <i class="devicon-azuresqldatabase-plain skill-icon back"></i>
+                        </div>
+                        <div class="skill-item">
+                            <i class="devicon-html5-plain skill-icon fron"></i>
+                        </div>
+                        <div class="skill-item">
+                            <i class="devicon-unity-plain skill-icon apps"></i>
+                        </div>
+                        <div class="skill-item">
+                            <i class="devicon-windows8-original skill-icon apis"></i>
+                        </div>
+                        <div class="skill-item">
+                            <i class="devicon-python-plain skill-icon back"></i>
+                        </div>
+                        <div class="skill-item">
+                            <i class="devicon-github-plain skill-icon apps"></i>
+                        </div>
+                        <div class="skill-item">
+                            <i class="devicon-bash-plain skill-icon apps"></i>
+                        </div>
+                        <div class="skill-item">
+                            <i class="devicon-java-plain skill-icon back"></i>
+                        </div>
+                         <div class="skill-item">
+                            <i class="devicon-flask-original skill-icon apis"></i>
+                        </div>
+                        <div class="skill-item">
+                            <i class="devicon-docker-plain skill-icon apps"></i>
+                        </div>
+                        <div class="skill-item">
+                            <i class="devicon-json-plain skill-icon back"></i>
+                        </div>
+                        <div class="skill-item">
+                            <i class="skill-icon text grap">HLSL</i>
+                        </div>
+                        <div class="skill-item">
+                            <i class="skill-icon text apis">D3D11</i>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <h3>My Interests</h3>
+                    <div class="interests-grid">
+                        <div class="interest-item">
+                            <div class="interest-icon">🎵</div>
+                            <span>Music</span>
+                        </div>
+                        <div class="interest-item">
+                            <div class="interest-icon">🎮</div>
+                            <span>Games</span>
+                        </div>
+                        <div class="interest-item">
+                            <div class="interest-icon">💪</div>
+                            <span>Exercising</span>
+                        </div>
+                        <div class="interest-item">
+                            <div class="interest-icon">
+                                <img src = "{{ url_for('static', filename='images/mango.jpg') }}">
+                            </div>
+                            <span>Cats</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class = "bottom"></div>
+    </div>
+    <div class = "section" id = "contact">
+        <div class = "top"></div>
+        <div class = "middle">
+            <h1 class = "intro">Contact</h1>
+            <div class="contact-content">
+                <div class="contact-info">
+                    <h2>Get In Touch</h2>
+                    <p>I'm always open to connecting with others — whether it's to discuss sofware development, graphics programming, or new creative ideas.
+                    <p>If you'd like to get in touch, feel free to send me a message. I'd love to hear from you!</p>
+                    <div class="contact-item">
+                        <div class="contact-icon">📧</div>
+                        <div class="contact-details">
+                            <h3>Email</h3>
+                            <p><a href="mailto:michaelbiggar2005@outlook.com">michaelbiggar2005@outlook.com</a></p>
+                        </div>
+                    </div>
+
+                    <div class="contact-item">
+                        <div class="contact-icon">📱</div>
+                        <div class="contact-details">
+                            <h3>Phone</h3>
+                            <p><a href="tel:+6162165383">+1 (616) 216-5383</a></p>
+                        </div>
+                    </div>
+
+                    <div class="contact-item">
+                        <div class="contact-icon">📍</div>
+                        <div class="contact-details">
+                            <h3>Location</h3>
+                            <p>Hudsonville, MI, USA</p>
+                        </div>
+                    </div>
+
+                    <div class="contact-item">
+                        <div class="contact-icon">⏰</div>
+                        <div class="contact-details">
+                            <h3>Response Time</h3>
+                            <p>Within 24 hours</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="contact-form">
+                    <h2>Send Message</h2>
+                    <form id = "myForm">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="firstName">First Name</label>
+                                <input type="text" id="firstName" name="firstName" placeholder="John" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="lastName">Last Name</label>
+                                <input type="text" id="lastName" name="lastName" placeholder="Doe" required>
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="email">Email Address</label>
+                                <input type="email" id="email" name="email" placeholder="john.doe@example.com" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="phone">Phone Number</label>
+                                <input type="tel" id="phone" name="phone" placeholder="+1 (234) 567-8900">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="subject">Subject</label>
+                            <select id="subject" name="subject" required>
+                                <option value="">Select a subject</option>
+                                <option value="web">Web</option>
+                                <option value="backend">Backend</option>
+                                <option value="graphics">Graphics</option>
+                                <option value="games">Games</option>
+                                <option value="other">Other</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="message">Message</label>
+                            <textarea id="message" name="message" placeholder="Ask me anything!" required></textarea>
+                        </div>
+
+                        <button type="submit" class="submit-btn">Send Message</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class = "bottom"></div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+   <script src= "{{ url_for('static', filename='index.js') }}"></script>
+</body>
+</html>
