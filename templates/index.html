@@ -14,9 +14,9 @@
     <link rel="stylesheet" type='text/css' href="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/devicon.min.css" />
     <link rel = "stylesheet" href = "{{ url_for('static', filename='style.css') }}">
     <link rel = "icon" href = "static/images/game-engine-transparent.png"/>
-    <title>Biggar Code</title>
+    <title>Michael Biggar</title>
 </head>
-<body>
+<body id = "body">
     <nav id = "navbar">
         <span class = navCon>
             <span class = "navBut activeBut" id = "homeBut" data-target = "home" onclick = "Swap(this.dataset.target)">Home</span>
@@ -99,7 +99,7 @@
                         <div class = "badge apis">CertBot</div>
                         <div class = "badge apis">Gunicorn</div>
                     </div>     
-                    <div class = "scrollable">
+                    <div class = "scrollable" id = "scrollable">
                         <p>Built and deployed a personal portfolio website to showcase my projects and skills. This project allowed me to gain hands-on experience with frontend development using HTML, CSS, and JavaScript, with a strong focus on layout, animation, and interactive design</p>   
                         <h3>The backend is powered by a Flask application, served through a production-grade deployment stack:</h3>
                         <ul class = "microservices">

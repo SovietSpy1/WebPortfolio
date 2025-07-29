@@ -11,7 +11,7 @@
     --project-card-color: 30, 30, 30;
     --background-color: 15, 15, 15;
     --top-bot-background: 255, 255, 255, 0.1;
-    --clip-duration: 2s;
+    --clip-duration: 1s;
     --wipe-animation-play: running;
 }
 
@@ -22,6 +22,7 @@
     text-shadow: var(--text-shadow);
     color: rgb(var(--base-color));
     margin: 0px;
+    -webkit-tap-highlight-color: transparent;
 }
 /*skills*/
 .badge.back     { background-color: #2e7d57; } /* C++ */
@@ -52,7 +53,8 @@
     transition: none !important;
 }
 body{
-    min-height: 100vh;
+    background-color: rgb(var(--background-color));
+    height: 100%;
 }
 .top{
     display:block;
@@ -95,7 +97,9 @@ body{
 p{
     text-shadow: 0px 0px 5px rgba(var(--base-color), .2);
 }
-
+::selection{
+    background-color: rgba(var(--accent-color), 0.1);
+}
 #navbar{
     mix-blend-mode: difference;
     position: fixed;
@@ -110,6 +114,7 @@ p{
     justify-content: flex-end;
     backdrop-filter: blur(10px);
     background-color: rgba(var(--top-bot-background));
+    user-select: none;
 }
 #navbar .navCon{
     position: relative;
@@ -125,6 +130,7 @@ p{
     font-style:bold;
     cursor: pointer;
     transition: color 1s, text-shadow 1s;
+    user-select: none;
 }
 .activeBut{
     color: rgb(var(--base-color)) !important;
@@ -174,20 +180,20 @@ p{
 }
 
 #border{
-    position: absolute;
+    position: fixed;
     display:none;
-    bottom: 0%;
+    bottom: 0dvh;
     left: 0%;
     width: 100%;
     height: 40%;
     z-index: 2;
     background: linear-gradient(to top, black 0%, transparent 100%);
     opacity: 0;
-    transition: bottom 2s ease-in-out, opacity 1s ease;
+    transition: bottom var(--clip-duration) ease-in-out, opacity 1s ease;
 }
 .activeBorder{
     opacity: 1 !important;
-    bottom: 100% !important;
+    bottom: 100dvh !important;
 }
 .section{
     z-index: 0;
@@ -201,14 +207,17 @@ p{
     justify-content: flex-start;
     clip-path: inset(100% 0% 0% 0%);
     overflow: hidden;
-    transition: clip-path 2s ease-in-out;
+    transition: clip-path var(--clip-duration) ease-in-out;
     background-color: rgb(var(--background-color));
 }   
 .shown{
     display: flex !important;
 }
 .non-clipped{
-    clip-path: inset(0% 0% 0% 0%) !important;
+    clip-path: inset(0svh 0% 0% 0%) !important;
+}
+#home{
+    height: 100vh;
 }
 #home video{
     z-index: -1;
@@ -221,6 +230,7 @@ p{
 #home .main-content{
     display: flex;
     width: 100%;
+    height: 100vh;
     flex: 1;
     box-sizing: border-box;
     justify-content: center;

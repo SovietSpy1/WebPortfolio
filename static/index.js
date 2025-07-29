@@ -123,6 +123,8 @@ function Swap(a){
     if (swapTo == swapFrom){
         return;
     }
+    const body = document.getElementById("body");
+    body.style.overflow = "hidden";
     border.classList.add("shown");
     border.offsetHeight;
     border.classList.add("activeBorder");
@@ -132,7 +134,7 @@ function Swap(a){
     swapTo.classList.add("fixed");
     swapTo.classList.add("shown");
     swapTo.offsetHeight;
-    swapTo.style.clipPath = "inset(100vh 0 0 0)";
+    swapTo.style.clipPath = "inset(100dvh 0 0 0)";
     swapTo.offsetHeight;
     swapTo.classList.remove("noT");
     swapTo.classList.add("non-clipped");
@@ -141,6 +143,7 @@ function Swap(a){
     swapFrom.classList.add("fixed");
     swapFrom.style.top = `-${scrollY}px`;
     setTimeout(()=>{
+        body.style.overflow = "scroll";
         swapTo.classList.remove("fixed");
         swapTo.classList.add("noT");
         swapTo.style.clipPath = "inset(100% 0% 0% 0%)";
