@@ -11,7 +11,7 @@
     --project-card-color: 30, 30, 30;
     --background-color: 15, 15, 15;
     --top-bot-background: 255, 255, 255, 0.1;
-    --clip-duration: 1s;
+    --clip-duration: 2s;
     --wipe-animation-play: running;
 }
 
@@ -43,6 +43,9 @@
     color: rgb(var(--accent-color));
     font-weight: 600;
 }
+p{
+    font-size: 1.5em;
+}
 .active{
     z-index: 1 !important;
 }
@@ -55,6 +58,7 @@
 body{
     background-color: rgb(var(--background-color));
     height: 100%;
+    overflow: hidden;
 }
 .top{
     display:block;
@@ -182,18 +186,18 @@ p{
 #border{
     position: fixed;
     display:none;
-    bottom: 0dvh;
+    top: calc(100vh - 40%);
     left: 0%;
     width: 100%;
     height: 40%;
     z-index: 2;
     background: linear-gradient(to top, black 0%, transparent 100%);
     opacity: 0;
-    transition: bottom var(--clip-duration) ease-in-out, opacity 1s ease;
+    transition: top var(--clip-duration) ease-in-out, opacity 1s ease;
 }
 .activeBorder{
     opacity: 1 !important;
-    bottom: 100dvh !important;
+    top: -40% !important;
 }
 .section{
     z-index: 0;
@@ -214,7 +218,7 @@ p{
     display: flex !important;
 }
 .non-clipped{
-    clip-path: inset(0svh 0% 0% 0%) !important;
+    clip-path: inset(0 0% 0% 0%) !important;
 }
 #home{
     height: 100vh;
@@ -267,16 +271,16 @@ p{
     background-color: rgb(var(--accent-color));
 }
 /*projects page*/
-
-#projects .main-content p{
-    text-align: center;
-    font-size: 2em;
+#projects .projects-container{
+    height: 100%;
+    width: 100%;
+    overflow: clip;
 }
 #projects #card-expanded-container{
     position: fixed;
     top: 0;
-    height: 100vh;
-    overflow: hidden;
+    height: 100dvh;
+    overflow: clip;
     width: 100%;
     z-index: 2;
     background-color: rgba(var(--project-card-color), 0.2);
@@ -533,7 +537,6 @@ p{
 }
 #about .main-content p{
     margin-bottom:10px;
-    font-size: 1.1em;
 }
 #about .main-content .resume{
     background-color: rgb(var(--background-color));

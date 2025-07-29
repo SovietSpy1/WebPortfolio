@@ -99,7 +99,7 @@
                         <div class = "badge apis">CertBot</div>
                         <div class = "badge apis">Gunicorn</div>
                     </div>     
-                    <div class = "scrollable" id = "scrollable">
+                    <div class = "scrollable">
                         <p>Built and deployed a personal portfolio website to showcase my projects and skills. This project allowed me to gain hands-on experience with frontend development using HTML, CSS, and JavaScript, with a strong focus on layout, animation, and interactive design</p>   
                         <h3>The backend is powered by a Flask application, served through a production-grade deployment stack:</h3>
                         <ul class = "microservices">
@@ -111,140 +111,142 @@
                     </div>
                 </div>
             </div>
-            <h1 class = "intro">Welcome To My Portfolio</h1>
-            <div class = "main-content">
-                <p>I've worked on a range of software projects — from puzzle platformers and 3D action games to full-stack web applications. I enjoy exploring different areas of software engineering, whether it's graphics programming, game development, or building scalable web systems. My latest and most ambitious project is a fully custom 3D game engine, built from the ground up in C++ using Direct3D 11. Along the way, I've also gained experience with tools and technologies like C#, Python, Unity, Visual Studio, Docker, Git, JavaScript, Flask, SQL, and cloud platforms, allowing me to approach challenges from both frontend and backend perspectives.</p>
-                <div class="container">
-                    <div class = "swiper">
-                        <div class = "slider-wrapper">
-                            <div class = "swiper-wrapper">
-                                <div class="swiper-slide card-item">
-                                    <a class = "card-link openable" name = "store-backend" onclick = "OpenCard(name)">
-                                        <img src = "{{ url_for('static', filename='images/projects/backend-product-manager.png') }}" class = "card-image">
-                                        <div class = "card-skills">
-                                            <div class = "badge apis">Flask</div>
-                                            <div class = "badge back">Python</div>
-                                            <div class = "badge apps">Docker</div>
-                                            <div class = "badge conc">JWT Verification</div>
-                                            <div class = "badge algo">Hashing</div>
-                                            <div class = "badge back">SQL</div>
-                                        </div>
-                                        <div class = "card-bottom">
-                                            <span class = "material-symbols-rounded card-button">arrow_forward</span>
-                                            <div class = "card-title">
-                                                Store Backend
+            <div class = "projects-container">
+                <h1 class = "intro">Welcome To My Portfolio</h1>
+                <div class = "main-content">
+                    <p>I've worked on a range of software projects — from puzzle platformers and 3D action games to full-stack web applications. I enjoy exploring different areas of software engineering, whether it's graphics programming, game development, or building scalable web systems. My latest and most ambitious project is a fully custom 3D game engine, built from the ground up in C++ using Direct3D 11. Along the way, I've also gained experience with tools and technologies like C#, Python, Unity, Visual Studio, Docker, Git, JavaScript, Flask, SQL, and cloud platforms, allowing me to approach challenges from both frontend and backend perspectives.</p>
+                    <div class="container">
+                        <div class = "swiper">
+                            <div class = "slider-wrapper">
+                                <div class = "swiper-wrapper">
+                                    <div class="swiper-slide card-item">
+                                        <a class = "card-link openable" name = "store-backend" onclick = "OpenCard(name)">
+                                            <img src = "{{ url_for('static', filename='images/projects/backend-product-manager.png') }}" class = "card-image">
+                                            <div class = "card-skills">
+                                                <div class = "badge apis">Flask</div>
+                                                <div class = "badge back">Python</div>
+                                                <div class = "badge apps">Docker</div>
+                                                <div class = "badge conc">JWT Verification</div>
+                                                <div class = "badge algo">Hashing</div>
+                                                <div class = "badge back">SQL</div>
                                             </div>
-                                        </div>
-                                        
-                                    </a>
-                                </div>
-                                <div class="swiper-slide card-item">
-                                    <a class = "card-link openable" name = "portfolio" onclick = "OpenCard(name)">
-                                        <img src = "{{ url_for('static', filename='images/projects/Portfolio.png') }}" class = "card-image">
-                                        <div class = "card-skills">
-                                            <div class = "badge apis">Flask</div>
-                                            <div class = "badge back">Python</div>
-                                            <div class = "badge fron">HTML</div>
-                                            <div class = "badge fron">JS</div>
-                                            <div class = "badge fron">CSS</div>
-                                            <div class = "badge conc">Web Design</div>
-                                            <div class = "badge apps">Google Cloud</div>
-                                            <div class = "badge apis">Nginx</div>
-                                            <div class = "badge apis">Gunicorn</div>
-                                            <div class = "badge apps">Github</div>
-                                        </div>
-                                        <div class = "card-bottom">
-                                            <span class = "material-symbols-rounded card-button">arrow_forward</span>
-                                            <div class = "card-title">
-                                                Portfolio
+                                            <div class = "card-bottom">
+                                                <span class = "material-symbols-rounded card-button">arrow_forward</span>
+                                                <div class = "card-title">
+                                                    Store Backend
+                                                </div>
                                             </div>
-                                        </div>
-                                        
-                                    </a>
-                                </div>
-                                <div class="swiper-slide card-item">
-                                    <a href = "https://sovietspy420.itch.io/portal-rush" target = "_blank" class = "card-link">
-                                        <img src = "{{ url_for('static', filename='images/projects/portal_rush.png') }}"class = "card-image">
-                                        <div class = "card-skills">
-                                            <div class = "badge back">C#</div>
-                                            <div class = "badge apps">Unity</div>
-                                            <div class = "badge algo">Physics</div>
-                                            <div class = "badge grap">HLSL</div>
-                                            <div class = "badge grap">VFX</div>
-                                            <div class = "badge grap">Textures</div>
-                                        </div>
-                                        <div class = "card-bottom">
-                                            <span class = "material-symbols-rounded card-button">arrow_forward</span>
-                                            <div class = "card-title">
-                                                Portal Rush
+                                            
+                                        </a>
+                                    </div>
+                                    <div class="swiper-slide card-item">
+                                        <a class = "card-link openable" name = "portfolio" onclick = "OpenCard(name)">
+                                            <img src = "{{ url_for('static', filename='images/projects/Portfolio.png') }}" class = "card-image">
+                                            <div class = "card-skills">
+                                                <div class = "badge apis">Flask</div>
+                                                <div class = "badge back">Python</div>
+                                                <div class = "badge fron">HTML</div>
+                                                <div class = "badge fron">JS</div>
+                                                <div class = "badge fron">CSS</div>
+                                                <div class = "badge conc">Web Design</div>
+                                                <div class = "badge apps">Google Cloud</div>
+                                                <div class = "badge apis">Nginx</div>
+                                                <div class = "badge apis">Gunicorn</div>
+                                                <div class = "badge apps">Github</div>
                                             </div>
-                                        </div>
-                                        
-                                    </a>
-                                </div>
-                                <div class="swiper-slide card-item">
-                                    <a href = "https://sovietspy420.itch.io/escape-velocity" target = "_blank" class = "card-link">
-                                        <img src = "{{ url_for('static', filename='images/projects/escape_velocity.png') }}" class = "card-image">
-                                        <div class = "card-skills">
-                                            <div class = "badge back">C#</div>
-                                            <div class = "badge apps">Unity</div>
-                                            <div class = "badge grap">Paticle Systems</div>
-                                            <div class = "badge conc">Animations</div>
-                                            <div class = "badge algo">Systems</div>
-                                            <div class = "badge algo">Gameplay</div>
-                                        </div>
-                                        <div class = "card-bottom">
-                                            <span class = "material-symbols-rounded card-button">arrow_forward</span>
-                                            <div class = "card-title">
-                                                Escape Velocity
+                                            <div class = "card-bottom">
+                                                <span class = "material-symbols-rounded card-button">arrow_forward</span>
+                                                <div class = "card-title">
+                                                    Portfolio
+                                                </div>
                                             </div>
-                                        </div>
-                                    </a>
-                                </div>
-                                <div class="swiper-slide card-item">
-                                    <a href = "https://sovietspy420.itch.io/game-engine-demo" target = "_blank" class = "card-link">
-                                        <img src = "{{ url_for('static', filename='images/projects/game-engine.png') }}" class = "card-image">
-                                        <div class = "card-skills">
-                                            <div class = "badge back">C++</div>
-                                            <div class = "badge grap">HLSL</div>
-                                            <div class = "badge apis">D3D11</div>
-                                            <div class = "badge apps">Win32</div>
-                                            <div class = "badge grap">Compute Shaders</div>
-                                            <div class = "badge grap">Texturing</div>
-                                            <div class = "badge algo">Matricies</div>
-                                            <div class = "badge algo">Physics</div>
-                                            <div class = "badge grap">Lighting</div>
-                                        </div>
-                                        <div class = "card-bottom">
-                                            <span class = "material-symbols-rounded card-button">arrow_forward</span>
-                                            <div class = "card-title">
-                                                Graphics Engine
+                                            
+                                        </a>
+                                    </div>
+                                    <div class="swiper-slide card-item">
+                                        <a href = "https://sovietspy420.itch.io/portal-rush" target = "_blank" class = "card-link">
+                                            <img src = "{{ url_for('static', filename='images/projects/portal_rush.png') }}"class = "card-image">
+                                            <div class = "card-skills">
+                                                <div class = "badge back">C#</div>
+                                                <div class = "badge apps">Unity</div>
+                                                <div class = "badge algo">Physics</div>
+                                                <div class = "badge grap">HLSL</div>
+                                                <div class = "badge grap">VFX</div>
+                                                <div class = "badge grap">Textures</div>
                                             </div>
-                                        </div>
-                                    </a>
-                                </div>
-                                <div class="swiper-slide card-item">
-                                    <a href = "https://sovietspy420.itch.io/spartasoft-studio-prototype-dash-clash"target = "_blank" class = "card-link">
-                                        <img src = "{{ url_for('static', filename='images/projects/dash-clash.png') }}" class = "card-image">
-                                        <div class = "card-skills">
-                                            <div class = "badge back">C#</div>
-                                            <div class = "badge apps">Unity</div>
-                                            <div class = "badge algo">Gameplay</div>
-                                            <div class = "badge conc">Networking</div>
-                                            <div class = "badge algo">Systems</div>
-                                        </div>
-                                        <div class = "card-bottom">
-                                            <span class = "material-symbols-rounded card-button">arrow_forward</span>
-                                            <div class = "card-title">
-                                                Dash Clash
+                                            <div class = "card-bottom">
+                                                <span class = "material-symbols-rounded card-button">arrow_forward</span>
+                                                <div class = "card-title">
+                                                    Portal Rush
+                                                </div>
                                             </div>
-                                        </div>
-                                    </a>
+                                            
+                                        </a>
+                                    </div>
+                                    <div class="swiper-slide card-item">
+                                        <a href = "https://sovietspy420.itch.io/escape-velocity" target = "_blank" class = "card-link">
+                                            <img src = "{{ url_for('static', filename='images/projects/escape_velocity.png') }}" class = "card-image">
+                                            <div class = "card-skills">
+                                                <div class = "badge back">C#</div>
+                                                <div class = "badge apps">Unity</div>
+                                                <div class = "badge grap">Paticle Systems</div>
+                                                <div class = "badge conc">Animations</div>
+                                                <div class = "badge algo">Systems</div>
+                                                <div class = "badge algo">Gameplay</div>
+                                            </div>
+                                            <div class = "card-bottom">
+                                                <span class = "material-symbols-rounded card-button">arrow_forward</span>
+                                                <div class = "card-title">
+                                                    Escape Velocity
+                                                </div>
+                                            </div>
+                                        </a>
+                                    </div>
+                                    <div class="swiper-slide card-item">
+                                        <a href = "https://sovietspy420.itch.io/game-engine-demo" target = "_blank" class = "card-link">
+                                            <img src = "{{ url_for('static', filename='images/projects/game-engine.png') }}" class = "card-image">
+                                            <div class = "card-skills">
+                                                <div class = "badge back">C++</div>
+                                                <div class = "badge grap">HLSL</div>
+                                                <div class = "badge apis">D3D11</div>
+                                                <div class = "badge apps">Win32</div>
+                                                <div class = "badge grap">Compute Shaders</div>
+                                                <div class = "badge grap">Texturing</div>
+                                                <div class = "badge algo">Matricies</div>
+                                                <div class = "badge algo">Physics</div>
+                                                <div class = "badge grap">Lighting</div>
+                                            </div>
+                                            <div class = "card-bottom">
+                                                <span class = "material-symbols-rounded card-button">arrow_forward</span>
+                                                <div class = "card-title">
+                                                    Graphics Engine
+                                                </div>
+                                            </div>
+                                        </a>
+                                    </div>
+                                    <div class="swiper-slide card-item">
+                                        <a href = "https://sovietspy420.itch.io/spartasoft-studio-prototype-dash-clash"target = "_blank" class = "card-link">
+                                            <img src = "{{ url_for('static', filename='images/projects/dash-clash.png') }}" class = "card-image">
+                                            <div class = "card-skills">
+                                                <div class = "badge back">C#</div>
+                                                <div class = "badge apps">Unity</div>
+                                                <div class = "badge algo">Gameplay</div>
+                                                <div class = "badge conc">Networking</div>
+                                                <div class = "badge algo">Systems</div>
+                                            </div>
+                                            <div class = "card-bottom">
+                                                <span class = "material-symbols-rounded card-button">arrow_forward</span>
+                                                <div class = "card-title">
+                                                    Dash Clash
+                                                </div>
+                                            </div>
+                                        </a>
+                                    </div>
                                 </div>
+                                <div class="swiper-pagination"></div>
+                                <div class="swiper-slide-button swiper-button-prev"></div>
+                                <div class="swiper-slide-button swiper-button-next"></div>
                             </div>
-                            <div class="swiper-pagination"></div>
-                            <div class="swiper-slide-button swiper-button-prev"></div>
-                            <div class="swiper-slide-button swiper-button-next"></div>
                         </div>
                     </div>
                 </div>

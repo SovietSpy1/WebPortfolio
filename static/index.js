@@ -36,6 +36,10 @@ const styles = getComputedStyle(root);
 const clipDuration = parseCssTime(styles.getPropertyValue('--clip-duration').trim());
 const baseColor = styles.getPropertyValue("--base-color").trim();
 const unselectedColor = styles.getPropertyValue("--unselected-color").trim();
+let scrollY;
+let openedCard = false;
+let cardName = null;
+let inAnim = false;
 //end grab variables
 //typewriter effect
 const typewriter = document.getElementById("typewriter");
@@ -100,9 +104,8 @@ if (typewriter != null){
 //end typewriter effect
 //swapping windows
 let lastActive = null;
-let swapping = false;
 function Swap(a){
-    if (swapping){
+    if (inAnim){
         return;
     }
     const actives = document.getElementsByClassName("active");
@@ -128,13 +131,13 @@ function Swap(a){
     border.classList.add("shown");
     border.offsetHeight;
     border.classList.add("activeBorder");
-    swapping = true;
-    const scrollY = window.scrollY;
+    inAnim = true;
+    scrollY = window.scrollY;
     swapTo.classList.add("noT");
     swapTo.classList.add("fixed");
     swapTo.classList.add("shown");
     swapTo.offsetHeight;
-    swapTo.style.clipPath = "inset(100dvh 0 0 0)";
+    swapTo.style.clipPath = "inset(100vh 0 0 0)";
     swapTo.offsetHeight;
     swapTo.classList.remove("noT");
     swapTo.classList.add("non-clipped");
@@ -161,36 +164,82 @@ function Swap(a){
         border.classList.remove("shown");
         border.offsetHeight;
         border.classList.remove("noT");
-        swapping = false;
+        if (swapFrom.id == "projects"){
+            if (openedCard){
+                ForceCloseCard(cardName);
+            }
+        }
+        inAnim = false;
     }, clipDuration);
     swapToButton.classList.add("activeBut");
     swapFromButton.classList.remove("activeBut");
 }
 //end swapping window
 //close card
-function CloseCard(a){
+function ForceCloseCard(a){
     const cardWindow = document.getElementById("card-expanded-container");
     const card = document.getElementById(a);
+    const projectsPage = document.getElementById("projects");
+    if (!card || !cardWindow){
+        return;
+    }
+    cardWindow.classList.add("noT");
+    cardWindow.style.opacity = "0";
+    cardWindow.classList.remove("shown");
+    cardWindow.classList.remove("noT");
+    card.classList.add("noT");
+    card.style.opacity = "0";
+    card.style.transform = "translateY(100%)";
+    card.classList.remove("shown");
+    card.classList.remove("noT");
+    projectsPage.classList.add("noT");
+    projectsPage.style.position = "absolute";
+    projectsPage.style.top = "0px";
+    projectsPage.classList.remove("noT");
+    cardWindow.offsetHeight;
+    card.offsetHeight;
+    projectsPage.offsetHeight;
+}
+function CloseCard(a){
+    if (inAnim){
+        return;
+    }
+    const cardWindow = document.getElementById("card-expanded-container");
+    const card = document.getElementById(a);
+    const projectsPage = document.getElementById("projects");
     if (!card || !cardWindow){
         return;
     }
     cardWindow.style.opacity = "0";
     card.style.opacity = "0";
     card.style.transform = "translateY(100%)";
+    inAnim = true;
     setTimeout(()=>{
         cardWindow.classList.remove("shown");
         card.classList.remove("shown");
+        projectsPage.style.position = "absolute";
+        projectsPage.style.top = "0px";
+        window.scrollTo(0, scrollY);
+        inAnim = false;
     }, 1000);
     
 }
 //end close card
 //open card
 function OpenCard(a){
+    if (inAnim){
+        return;
+    }
     const cardWindow = document.getElementById("card-expanded-container");
     const card = document.getElementById(a);
+    cardName = a;
+    const projectsPage = document.getElementById("projects");
+    scrollY = window.scrollY;
     if (!card || !cardWindow){
         return;
     }
+    projectsPage.style.position = "fixed";
+    projectsPage.style.top = `-${scrollY}px`;
     cardWindow.classList.add("shown");
     cardWindow.offsetHeight;
     cardWindow.style.opacity = "1";
@@ -198,6 +247,11 @@ function OpenCard(a){
     card.offsetHeight;
     card.style.opacity = "1";
     card.style.transform = "translateY(0%)";
+    openedCard = true;
+    inAnim = true;
+    setTimeout(()=>{
+        inAnim = false;
+    }, 1000)
 }
 //handle submission
 document.getElementById('myForm').addEventListener('submit', function(e) {
