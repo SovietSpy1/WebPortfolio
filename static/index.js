@@ -274,8 +274,10 @@ function Swap(targetId) {
 
         // Remove active from current section
         safeRemoveClass(swapFrom, "active");
-        safeAddClass(swapFrom, "fixed");
-        safeSetProperty(swapFrom, "top", `-${scrollY}px`);
+        if(!openedCard){
+            safeAddClass(swapFrom, "fixed");
+            safeSetProperty(swapFrom, "top", `-${scrollY}px`);
+        }
 
         // Complete animation after duration
         setTimeout(() => {
