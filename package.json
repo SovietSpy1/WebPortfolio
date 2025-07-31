@@ -1,0 +1,23 @@
+{
+  "name": "webportfolio",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/SovietSpy1/WebPortfolio.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/SovietSpy1/WebPortfolio/issues"
+  },
+  "homepage": "https://github.com/SovietSpy1/WebPortfolio#readme",
+  "description": "",
+  "dependencies": {
+    "three": "^0.178.0"
+  }
+}
