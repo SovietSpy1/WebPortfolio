@@ -1,3 +1,5 @@
+// =============== IMPORTS ===============
+import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.154.0/build/three.module.js';
 // =============== VARIABLES ===============
 // Swiper configuration
 let swiper;
@@ -524,7 +526,380 @@ function initializeFormHandling() {
         console.error('Error initializing form handling:', error);
     }
 }
+// =============== SMOKE SIM ===============
+//smoke values
+let darkAmp = 10.0;
+let eVX = 0.0;
+let eVY = 5.0;
+let visc = 0.0001;
+let diff = 0.001;
+let radius = 0.1;
+let maxSpeed = 5.0;
+let resolution = 100;
+let size = resolution + 2;
+let smokeVal = 1;
+let pressure;
+let div;
+let oldvX;
+let oldvY;
+let vX;
+let vY;
+let colors;
+let densities;
+let oldDensities;
+let held = false;
+let clickPos;
+let spawnPos;
+let aimDir;
+let velMag = 20;
+//three js values
+let orthoSize = 0.5;
+let width;
+let height;
+let aspect;
+let camera;
+let scene;
+let renderer;
+let smokeTexture;
+let canvas;
 
+class Time{
+    static deltaTime = 0;
+    static lastTime = 0;
+}
+function resizeScene() {
+    width = window.innerWidth;
+    height = window.innerHeight;
+
+    // update drawing buffer to match window size (handles devicePixelRatio)
+    renderer.setPixelRatio(window.devicePixelRatio);
+    renderer.setSize(width, height, false); // false: don’t update the canvas style, just the buffer
+    aspect = window.innerWidth/window.innerHeight;
+    camera.left = -orthoSize;
+    camera.right = orthoSize;
+    camera.top = orthoSize;
+    camera.bottom = -orthoSize;
+    camera.updateProjectionMatrix();
+}
+function animate(){
+    requestAnimationFrame(animate);
+    if (Time.lastTime == 0){
+        Time.deltaTime = 0.16667;
+        Time.lastTime = performance.now();
+    }
+    else{
+        let currentTime = performance.now() / 1000;
+        Time.deltaTime = currentTime - Time.lastTime;
+        Time.lastTime = currentTime;
+    }
+    if (held){
+        aimDir = {x : clickPos.x - spawnPos.x , y : (1 - clickPos.y) -(1-spawnPos.y)};
+        let xV = aimDir.x * velMag;
+        let yV = aimDir.y * velMag;
+        let coordX = spawnPos.x * resolution;
+        let coordY = (1-spawnPos.y) * resolution;
+        AddToSmoke({x : coordX, y : coordY, z : 0}, radius, xV, yV);
+    }
+    SmokeUpdate();
+    renderer.render(scene,camera);
+}
+function IX(x, y){
+    return (y) * (resolution+2) + x;
+} 
+// Assuming these variables exist in your context
+// let resolution, visc, diff, darkAmp, eVY, radius, Time
+
+function CPUStart() {
+    const size = resolution + 2;
+    vX = new Float32Array(size * size);
+    vY = new Float32Array(size * size);
+    densities = new Float32Array(size * size);
+    oldvX = new Float32Array(size * size);
+    oldvY = new Float32Array(size * size);
+    oldDensities = new Float32Array(size * size);
+    pressure = new Float32Array(size * size);
+    div = new Float32Array(size * size);
+    colors = new Float32Array(resolution * resolution); // Assuming RGBA
+    
+    colors.fill(0);
+}
+
+function SmokeUpdate() {
+    AdvectUpdate();
+    //AddSource();
+    Diffuse();
+    VelUpdate();
+    TextureUpdate();
+}
+
+function Diffuse() {
+    [oldvX, vX] = [vX, oldvX];
+    [oldvY, vY] = [vY, oldvY];
+    DiffuseArray(vX, oldvX, visc, 1);
+    DiffuseArray(vY, oldvY, visc, 2);
+    [oldDensities, densities] = [densities, oldDensities];
+    DiffuseArray(densities, oldDensities, diff, 0);
+}
+
+function TextureUpdate() {
+    for (let y = 1; y <= resolution; y++) {
+        for (let x = 1; x <= resolution; x++) {
+            const colorIndex = ((x - 1) + (y - 1) * resolution);
+            colors[colorIndex] = densities[IX(x, y)];
+        }
+    }
+    // Assuming you have a method to update texture
+    // GetComponent<Material>()->textures.at(0)->MapToTexture(colors, resolution);
+    smokeTexture.needsUpdate = true;
+}
+
+function AdvectUpdate() {
+    [oldDensities, densities] = [densities, oldDensities];
+    Advect(densities, oldDensities, vX, vY, 0);
+    [oldvX, vX] = [vX, oldvX];
+    [oldvY, vY] = [vY, oldvY];
+    Advect(vX, oldvX, oldvX, oldvY, 1);
+    Advect(vY, oldvY, oldvX, oldvY, 2);
+}
+
+function AddSource() {
+    const xPos = Math.floor(0.5 * resolution);
+    const yPos = Math.floor(0.1 * resolution);
+    const ranVelocityX = Math.floor(Math.random() * 21);
+    AddToSmoke({x: xPos, y: yPos, z: 0}, radius, -10 + ranVelocityX, eVY);
+}
+
+function VelUpdate() {
+    Project(vX, vY, pressure, div);
+}
+
+function AddToSmoke(position, radius, xDir = 0, yDir = 0) {
+    const gridRad = radius * resolution;
+    const arrayRad = Math.floor(gridRad);
+    const leftSide = Math.max(0, Math.min(Math.floor(position.x - arrayRad), resolution - 1));
+    const rightSide = Math.max(0, Math.min(Math.floor(position.x + arrayRad), resolution - 1));
+    const topSide = Math.max(0, Math.min(Math.floor(position.y + arrayRad), resolution - 1));
+    const bottomSide = Math.max(0, Math.min(Math.floor(position.y - arrayRad), resolution - 1));
+    
+    for (let y = bottomSide; y <= topSide; y++) {
+        for (let x = leftSide; x <= rightSide; x++) {
+            const i = x + 1;
+            const j = y + 1;
+            const offset = {
+                x: x - position.x,
+                y: y - position.y,
+                z: 0 - position.z
+            };
+            const distance = Math.sqrt(offset.x * offset.x + offset.y * offset.y + offset.z * offset.z);
+            
+            if (distance <= gridRad) {
+                const dens = (1.0 - distance / (gridRad > 0 ? gridRad : 1));
+                densities[IX(i, j)] = Math.max(0.0, Math.min(1.0, 
+                    densities[IX(i, j)] + dens * darkAmp * Time.deltaTime));
+                vX[IX(i, j)] = Math.max(-10.0, Math.min(10.0, 
+                    vX[IX(i, j)] + dens * xDir * Time.deltaTime));
+                vY[IX(i, j)] = Math.max(-10.0, Math.min(10.0, 
+                    vY[IX(i, j)] + dens * yDir * Time.deltaTime));
+            }
+        }
+    }
+}
+
+function Advect(newData, oldData, xVel, yVel, b) {
+    for (let y = 1; y <= resolution; y++) {
+        for (let x = 1; x <= resolution; x++) {
+            // Find positions that current positions came from using current velocity
+            let xPos = x - xVel[IX(x, y)] * Time.deltaTime * resolution;
+            xPos = Math.max(0.0, Math.min(resolution, xPos));
+            let yPos = y - yVel[IX(x, y)] * Time.deltaTime * resolution;
+            yPos = Math.max(0.0, Math.min(resolution, yPos));
+            
+            const i = Math.floor(xPos);
+            const j = Math.floor(yPos);
+            const iProp = xPos - i;
+            const jProp = yPos - j;
+            
+            const bottomLeftData = (1 - iProp) * (1 - jProp) * oldData[IX(i, j)];
+            const bottomRightData = (iProp) * (1 - jProp) * oldData[IX(i + 1, j)];
+            const topLeftData = (1 - iProp) * (jProp) * oldData[IX(i, j + 1)];
+            const topRightData = (iProp) * (jProp) * oldData[IX(i + 1, j + 1)];
+            
+            newData[IX(x, y)] = bottomLeftData + bottomRightData + topLeftData + topRightData;
+        }
+    }
+    set_bnd(b, newData);
+}
+
+function DiffuseArray(newData, oldData, diff, b) {
+    const a = resolution * resolution * diff * Time.deltaTime;
+    
+    // Scale diffusion iterations with resolution for proper convergence
+    const baseIterations = 20;
+    let adaptiveIterations = baseIterations + Math.floor(resolution / 64) * 10;
+    adaptiveIterations = Math.min(adaptiveIterations, 100);
+    
+    for (let k = 0; k < adaptiveIterations; k++) {
+        for (let y = 1; y <= resolution; y++) {
+            for (let x = 1; x <= resolution; x++) {
+                newData[IX(x, y)] = (oldData[IX(x, y)] + a * (
+                    newData[IX(x - 1, y)] + 
+                    newData[IX(x + 1, y)] + 
+                    newData[IX(x, y + 1)] + 
+                    newData[IX(x, y - 1)]
+                )) / (4 * a + 1);
+            }
+        }
+    }
+    set_bnd(b, newData);
+}
+
+function Project(xVel, yVel, pressure, div) {
+    const h = (1.0 / resolution);
+    
+    for (let y = 1; y <= resolution; y++) {
+        for (let x = 1; x <= resolution; x++) {
+            div[IX(x, y)] = -0.5 * h * (
+                xVel[IX(x + 1, y)] - xVel[IX(x - 1, y)] + 
+                yVel[IX(x, y + 1)] - yVel[IX(x, y - 1)]
+            );
+            pressure[IX(x, y)] = 0;
+        }
+    }
+    set_bnd(0, div);
+    set_bnd(0, pressure);
+    
+    // Scale pressure solver iterations with resolution for proper convergence
+    const baseIterations = 20;
+    let adaptiveIterations = baseIterations + Math.floor(resolution / 64) * 10;
+    adaptiveIterations = Math.min(adaptiveIterations, 100);
+    
+    for (let k = 0; k < adaptiveIterations; k++) {
+        for (let y = 1; y <= resolution; y++) {
+            for (let x = 1; x <= resolution; x++) {
+                pressure[IX(x, y)] = (
+                    div[IX(x, y)] + 
+                    pressure[IX(x + 1, y)] + 
+                    pressure[IX(x - 1, y)] + 
+                    pressure[IX(x, y + 1)] + 
+                    pressure[IX(x, y - 1)]
+                ) / 4.0;
+            }
+        }
+    }
+    set_bnd(0, pressure);
+    
+    for (let y = 1; y <= resolution; y++) {
+        for (let x = 1; x <= resolution; x++) {
+            xVel[IX(x, y)] -= (pressure[IX(x + 1, y)] - pressure[IX(x - 1, y)]) * 0.5 / h;
+            yVel[IX(x, y)] -= (pressure[IX(x, y + 1)] - pressure[IX(x, y - 1)]) * 0.5 / h;
+        }
+    }
+    set_bnd(1, xVel);
+    set_bnd(2, yVel);
+}
+
+function set_bnd(b, x) {
+    for (let i = 1; i <= resolution; i++) {
+        x[IX(0, i)] = b === 1 ? -x[IX(1, i)] : x[IX(1, i)];
+        x[IX(resolution + 1, i)] = b === 1 ? -x[IX(resolution, i)] : x[IX(resolution, i)];
+        x[IX(i, 0)] = b === 2 ? -x[IX(i, 1)] : x[IX(i, 1)];
+        x[IX(i, resolution + 1)] = b === 2 ? -x[IX(i, resolution)] : x[IX(i, resolution)];
+    }
+    x[IX(0, 0)] = b !== 0 ? -x[IX(1, 1)] : x[IX(1, 1)];
+    x[IX(0, resolution + 1)] = b !== 0 ? -x[IX(1, resolution)] : x[IX(1, resolution)];
+    x[IX(resolution + 1, 0)] = b !== 0 ? -x[IX(resolution, 1)] : x[IX(resolution, 1)];
+    x[IX(resolution + 1, resolution + 1)] = b !== 0 ? -x[IX(resolution, resolution)] : x[IX(resolution, resolution)];
+}
+function initializeSmokeSim(){
+    try{
+        scene = new THREE.Scene();
+
+        aspect = window.innerWidth/window.innerHeight;
+        camera = new THREE.OrthographicCamera(-orthoSize * aspect, orthoSize * aspect, orthoSize, -orthoSize, 0.1, 1000);
+        canvas = document.querySelector('#smoke-sim')
+        renderer = new THREE.WebGLRenderer({
+            canvas: canvas,
+        });
+        camera.position.setZ(30);
+        resizeScene();
+        scene.background = new THREE.Color(0xeaeaea);
+        CPUStart();
+        const geometry = new THREE.PlaneGeometry(1,1);
+        smokeTexture = new THREE.DataTexture(colors, resolution, resolution, THREE.RedFormat, THREE.FloatType);
+        smokeTexture.needsUpdate = true;
+        smokeTexture.minFilter = THREE.LinearFilter;
+        smokeTexture.magFilter = THREE.LinearFilter;
+        smokeTexture.wrapS = smokeTexture.wrapT = THREE.ClampToEdgeWrapping;
+        const material = new THREE.ShaderMaterial({
+            uniforms: {
+                myDataTex: {value: smokeTexture}, 
+                texSize: {value: new THREE.Vector2(resolution, resolution)},
+            },
+            vertexShader: `
+                varying vec2 vUv;
+                void main(){
+                vUv = uv;
+                gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+                }
+            `,
+            fragmentShader: `
+                precision highp float;
+                uniform sampler2D myDataTex;
+                varying vec2 vUv;
+                
+                void main(){
+                vec4 data = texture(myDataTex, vUv);
+                float value = data.r;
+                gl_FragColor = vec4(15.0/255.0, 15.0/255.0, 15.0/255.0, value);
+                }
+            `,
+            transparent: true
+        });
+        const smokePlane = new THREE.Mesh(geometry, material);
+        scene.add(smokePlane);
+        window.addEventListener('resize', (evt) => {
+            resizeScene();
+        });
+        const home = document.querySelector('#home');
+        home.addEventListener('mousedown', (evt) => {
+            clickPos = getMousePos(evt);
+            spawnPos = clickPos;
+            held = true;
+        });
+        home.addEventListener("mousemove", (evt) => {
+            clickPos = getMousePos(evt);
+        });
+        home.addEventListener('mouseup', (evt) => {
+            held = false;
+        });
+        home.addEventListener('touchstart', (evt) =>{
+            const touch = evt.touches[0];
+            clickPos = getMousePos(touch);
+            spawnPos = clickPos;
+            held = true;
+        });
+        home.addEventListener('touchmove', (evt) =>{
+            const touch = evt.touches[0];
+            clickPos = getMousePos(touch);
+            console.log('Touch move:', touch.clientX, touch.clientY);
+        });
+        home.addEventListener('touchend', (evt) =>{
+            held = false;
+        });
+        animate();
+        console.log('Smoke Sim initialized successfully');
+    }
+    catch(error){
+        console.error('Error initializing smoke sim:', error);
+    }
+}
+function getMousePos(event) {
+    const rect = canvas.getBoundingClientRect();
+    return {
+        x: (event.clientX - rect.left) / (rect.right - rect.left),
+        y: (event.clientY - rect.top) / (rect.bottom - rect.top)
+    };
+}
 // =============== CLEANUP ===============
 function cleanup() {
     try {
@@ -533,6 +908,15 @@ function cleanup() {
         }
         if (swiper) {
             swiper.destroy();
+        }
+        if (scene){
+            scene.destroy();
+        }
+        if (camera){
+            camera.destroy();
+        }
+        if (renderer){
+            renderer.destroy();
         }
     } catch (error) {
         console.error('Error in cleanup:', error);
@@ -548,7 +932,7 @@ document.addEventListener('DOMContentLoaded', function() {
         initializeSwiper();
         initializeTypewriter();
         initializeFormHandling();
-        
+        initializeSmokeSim();
         console.log('Application initialized successfully');
     } catch (error) {
         console.error('Error during application initialization:', error);
@@ -557,3 +941,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
 // Cleanup on page unload
 window.addEventListener('beforeunload', cleanup);
+window.Swap = Swap;
+window.OpenCard = OpenCard;
+window.CloseCard = CloseCard;
