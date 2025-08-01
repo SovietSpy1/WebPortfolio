@@ -14,7 +14,6 @@ let scrollY = 0;
 let openedCard = false;
 let cardName = null;
 let inAnim = false;
-let lastActive = null;
 
 // Typewriter variables
 let typewriter;
@@ -22,7 +21,6 @@ let typewriterValues = ["Graphics Engineer", "Software Engineer", "Game Programm
 let vIndex = 0;
 let cIndex = 0;
 let reverse = false;
-let currentVal = "";
 let typeSpeed = 500;
 let eraseSpeed = 100;
 let adjustment = 0;
@@ -35,7 +33,47 @@ let body;
 let border;
 let projectsPage;
 let cardWindow;
+let activePage;
+let smokeVideo;
+//Smoke Variables
+//smoke values
+let darkAmp = 10.0;
+let eVX = 0.0;
+let eVY = 5.0;
+let visc = 0.0001;
+let diff = 0.001;
+let radius = 0.1;
+let resolution = 100;
+let size = resolution + 2;
+let pressure;
+let div;
+let oldvX;
+let oldvY;
+let vX;
+let vY;
+let colors;
+let densities;
+let oldDensities;
+let held = false;
+let clickPos;
+let spawnPos;
+let aimDir;
+let velMag = 20;
+//three js values
+let orthoSize = 0.5;
+let width;
+let height;
+let aspect;
+let camera;
+let scene;
+let renderer;
+let smokeTexture;
+let canvas;
 
+class Time{
+    static deltaTime = 0;
+    static lastTime = 0;
+}
 // =============== UTILITY FUNCTIONS ===============
 function parseCssTime(value) {
     try {
@@ -107,6 +145,7 @@ function initializeVariables() {
         body = getElementSafely("body");
         border = getElementSafely("border");
         projectsPage = getElementSafely("projects");
+        activePage = getElementSafely("home");
         cardWindow = getElementSafely("card-expanded-container");
         typewriter = getElementSafely("typewriter");
 
@@ -163,8 +202,6 @@ function initializeTypewriter() {
             console.warn('Typewriter element not found');
             return;
         }
-
-        currentVal = typewriterValues[vIndex];
         
         function type() {
             try {
@@ -284,6 +321,7 @@ function Swap(targetId) {
         // Complete animation after duration
         setTimeout(() => {
             try {
+                activePage = swapTo;
                 safeSetProperty(body, "overflow", "scroll");
                 safeRemoveClass(swapTo, "fixed");
                 safeAddClass(swapTo, "noT");
@@ -311,7 +349,9 @@ function Swap(targetId) {
                 if (swapFrom.id === "projects" && openedCard) {
                     ForceCloseCard(cardName);
                 }
-
+                if (swapTo.id == "home"){
+                    animate();
+                }
                 inAnim = false;
             } catch (error) {
                 console.error('Error completing swap animation:', error);
@@ -527,46 +567,6 @@ function initializeFormHandling() {
     }
 }
 // =============== SMOKE SIM ===============
-//smoke values
-let darkAmp = 10.0;
-let eVX = 0.0;
-let eVY = 5.0;
-let visc = 0.0001;
-let diff = 0.001;
-let radius = 0.1;
-let maxSpeed = 5.0;
-let resolution = 100;
-let size = resolution + 2;
-let smokeVal = 1;
-let pressure;
-let div;
-let oldvX;
-let oldvY;
-let vX;
-let vY;
-let colors;
-let densities;
-let oldDensities;
-let held = false;
-let clickPos;
-let spawnPos;
-let aimDir;
-let velMag = 20;
-//three js values
-let orthoSize = 0.5;
-let width;
-let height;
-let aspect;
-let camera;
-let scene;
-let renderer;
-let smokeTexture;
-let canvas;
-
-class Time{
-    static deltaTime = 0;
-    static lastTime = 0;
-}
 function resizeScene() {
     width = window.innerWidth;
     height = window.innerHeight;
@@ -582,35 +582,47 @@ function resizeScene() {
     camera.updateProjectionMatrix();
 }
 function animate(){
-    requestAnimationFrame(animate);
-    if (Time.lastTime == 0){
-        Time.deltaTime = 0.16667;
-        Time.lastTime = performance.now();
+    try{
+        if (activePage != getElementSafely("home")){
+            Time.lastTime = 0;
+            return;
+        }
+        if (Time.lastTime == 0){
+            Time.deltaTime = 0.16667;
+            Time.lastTime = performance.now();
+        }
+        else{
+            let currentTime = performance.now() / 1000;
+            Time.deltaTime = currentTime - Time.lastTime;
+            Time.lastTime = currentTime;
+        }
+        if (held){
+            aimDir = {x : clickPos.x - spawnPos.x , y : (1 - clickPos.y) -(1-spawnPos.y)};
+            let xV = aimDir.x * velMag;
+            let yV = aimDir.y * velMag;
+            let coordX = spawnPos.x * resolution;
+            let coordY = (1-spawnPos.y) * resolution;
+            AddToSmoke({x : coordX, y : coordY, z : 0}, radius, xV, yV);
+        }
+        SmokeUpdate();
+        renderer.render(scene,camera);
+        requestAnimationFrame(animate);
     }
-    else{
-        let currentTime = performance.now() / 1000;
-        Time.deltaTime = currentTime - Time.lastTime;
-        Time.lastTime = currentTime;
+    catch{
+        console.error("Error running Smoke Simulation; switching to static video.");
+        if (smokeVideo){
+            safeAddClass(smokeVideo, "shown");
+        }
+        if (canvas){
+            safeRemoveClass(canvas, "shown");
+        }
     }
-    if (held){
-        aimDir = {x : clickPos.x - spawnPos.x , y : (1 - clickPos.y) -(1-spawnPos.y)};
-        let xV = aimDir.x * velMag;
-        let yV = aimDir.y * velMag;
-        let coordX = spawnPos.x * resolution;
-        let coordY = (1-spawnPos.y) * resolution;
-        AddToSmoke({x : coordX, y : coordY, z : 0}, radius, xV, yV);
-    }
-    SmokeUpdate();
-    renderer.render(scene,camera);
 }
 function IX(x, y){
     return (y) * (resolution+2) + x;
 } 
-// Assuming these variables exist in your context
-// let resolution, visc, diff, darkAmp, eVY, radius, Time
 
 function CPUStart() {
-    const size = resolution + 2;
     vX = new Float32Array(size * size);
     vY = new Float32Array(size * size);
     densities = new Float32Array(size * size);
@@ -619,7 +631,7 @@ function CPUStart() {
     oldDensities = new Float32Array(size * size);
     pressure = new Float32Array(size * size);
     div = new Float32Array(size * size);
-    colors = new Float32Array(resolution * resolution); // Assuming RGBA
+    colors = new Float32Array(resolution * resolution);
     
     colors.fill(0);
 }
@@ -648,8 +660,6 @@ function TextureUpdate() {
             colors[colorIndex] = densities[IX(x, y)];
         }
     }
-    // Assuming you have a method to update texture
-    // GetComponent<Material>()->textures.at(0)->MapToTexture(colors, resolution);
     smokeTexture.needsUpdate = true;
 }
 
@@ -768,12 +778,8 @@ function Project(xVel, yVel, pressure, div) {
     set_bnd(0, div);
     set_bnd(0, pressure);
     
-    // Scale pressure solver iterations with resolution for proper convergence
-    const baseIterations = 20;
-    let adaptiveIterations = baseIterations + Math.floor(resolution / 64) * 10;
-    adaptiveIterations = Math.min(adaptiveIterations, 100);
-    
-    for (let k = 0; k < adaptiveIterations; k++) {
+    const baseIterations = 20;    
+    for (let k = 0; k < baseIterations; k++) {
         for (let y = 1; y <= resolution; y++) {
             for (let x = 1; x <= resolution; x++) {
                 pressure[IX(x, y)] = (
@@ -812,6 +818,7 @@ function set_bnd(b, x) {
 }
 function initializeSmokeSim(){
     try{
+        smokeVideo = getElementSafely("smoke-vid");
         scene = new THREE.Scene();
 
         aspect = window.innerWidth/window.innerHeight;
@@ -886,11 +893,18 @@ function initializeSmokeSim(){
         home.addEventListener('touchend', (evt) =>{
             held = false;
         });
+        safeAddClass(canvas, "shown");
         animate();
         console.log('Smoke Sim initialized successfully');
     }
     catch(error){
         console.error('Error initializing smoke sim:', error);
+        if (smokeVideo){
+            safeAddClass(smokeVideo, "shown");
+        }
+        if (canvas){
+            safeRemoveClass(canvas, "shown");
+        }
     }
 }
 function getMousePos(event) {
