@@ -278,6 +278,19 @@ function initializeTypewriter() {
 }
 
 // =============== WINDOW SWAPPING ===============
+async function showUrlBar() {
+  return new Promise((resolve) => {
+    // Scroll to top (or near top) to signal the browser to reveal the URL bar.
+    window.scrollTo({ top: 0, behavior: 'auto' });
+
+    // Some browsers need a tiny bounce to trigger the UI.
+    window.scrollBy(0, 1);
+    window.scrollBy(0, -1);
+
+    // Give the browser a short moment to animate the address bar back.
+    setTimeout(resolve, 150);
+  });
+}
 function Swap(targetId) {
     try {
         if (inAnim) {
