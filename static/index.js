@@ -21,13 +21,14 @@ let typewriterValues = ["Graphics Engineer", "Software Engineer", "Game Programm
 let vIndex = 0;
 let cIndex = 0;
 let reverse = false;
-let typeSpeed = 500;
+let typeSpeed = 275;
 let eraseSpeed = 100;
 let adjustment = 0;
 let adjustmentStep = 5;
 let visible = true;
 let blinkInterval;
-
+let pauseTime = 0;
+let ranTime = 0;
 // DOM elements
 let body;
 let border;
@@ -54,11 +55,13 @@ let vY;
 let colors;
 let densities;
 let oldDensities;
-let held = false;
-let clickPos;
-let spawnPos;
-let aimDir;
 let velMag = 20;
+let inputMode = 0;
+let sourceMode = 0;
+let spawn;
+let vel;
+let open = false;
+let smokeOptHolder;
 //three js values
 let orthoSize = 0.5;
 let width;
@@ -69,7 +72,17 @@ let scene;
 let renderer;
 let smokeTexture;
 let canvas;
-
+class Mouse{
+    static first = true;
+    static moving = false;
+    static held = false;
+    static lastMoveTime = 0;
+    static movingThreshold = 0.1;
+    static clickPos = {x : 0, y : 0};
+    static pos = {x : 0, y : 0};
+    static lastPos = {x : 0, y : 0};
+    static deltaMousePos = {x : 0, y : 0};
+}
 class Time{
     static deltaTime = 0;
     static lastTime = 0;
@@ -205,6 +218,8 @@ function initializeTypewriter() {
         
         function type() {
             try {
+                ranTime = Math.random() * 50;
+                pauseTime = 0;
                 if (!reverse) {
                     const char = typewriterValues[vIndex][cIndex];
                     const newChar = char === " " ? "\u00A0" : char;
@@ -212,6 +227,7 @@ function initializeTypewriter() {
                     
                     if (cIndex === typewriterValues[vIndex].length - 1) {
                         reverse = true;
+                        pauseTime = 750;
                     } else {
                         cIndex++;
                     }
@@ -233,7 +249,7 @@ function initializeTypewriter() {
                         }
                     }
                 }
-                setTimeout(type, reverse ? eraseSpeed - adjustment : typeSpeed);
+                setTimeout(type, reverse ? eraseSpeed - adjustment + pauseTime: typeSpeed + ranTime);
             } catch (error) {
                 console.error('Error in typewriter animation:', error);
             }
@@ -350,7 +366,7 @@ function Swap(targetId) {
                     ForceCloseCard(cardName);
                 }
                 if (swapTo.id == "home"){
-                    animate();
+                    requestAnimationFrame(animate);
                 }
                 inAnim = false;
             } catch (error) {
@@ -502,7 +518,7 @@ function OpenCard(cardId) {
 // =============== FORM HANDLING ===============
 function initializeFormHandling() {
     try {
-        const form = document.getElementById('myForm');
+        const form = getElementSafely('myForm');
         if (!form) {
             console.warn('Contact form not found');
             return;
@@ -583,33 +599,45 @@ function resizeScene() {
 }
 function animate(){
     try{
+        let currentTime = performance.now() / 1000;
         if (activePage != getElementSafely("home")){
             Time.lastTime = 0;
             return;
         }
         if (Time.lastTime == 0){
             Time.deltaTime = 0.16667;
-            Time.lastTime = performance.now();
+            Time.lastTime = performance.now()/1000;
         }
         else{
-            let currentTime = performance.now() / 1000;
             Time.deltaTime = currentTime - Time.lastTime;
             Time.lastTime = currentTime;
         }
-        if (held){
-            aimDir = {x : clickPos.x - spawnPos.x , y : (1 - clickPos.y) -(1-spawnPos.y)};
-            let xV = aimDir.x * velMag;
-            let yV = aimDir.y * velMag;
-            let coordX = spawnPos.x * resolution;
-            let coordY = (1-spawnPos.y) * resolution;
-            AddToSmoke({x : coordX, y : coordY, z : 0}, radius, xV, yV);
+        if (Mouse.moving){
+            if ((currentTime - Mouse.movingThreshold) > Mouse.lastMoveTime){
+                Mouse.moving = false;
+            }
+        }
+        if (Mouse.held){
+            if ((currentTime - 1) > Mouse.lastMoveTime){
+                Mouse.held = false;
+            }
+        }
+        switch (inputMode){
+            case 0:
+                InputFollow();
+                break;
+            case 1:
+                InputSAD();
+                break;
+            default:
+                break;
         }
         SmokeUpdate();
         renderer.render(scene,camera);
         requestAnimationFrame(animate);
     }
-    catch{
-        console.error("Error running Smoke Simulation; switching to static video.");
+    catch(error){
+        console.error("Error running Smoke Simulation; switching to static video.", error);
         if (smokeVideo){
             safeAddClass(smokeVideo, "shown");
         }
@@ -617,6 +645,25 @@ function animate(){
             safeRemoveClass(canvas, "shown");
         }
     }
+}
+function ShowInfo(){
+    window.alert(clickPos.x);
+}
+function InputSAD(){
+    if (!Mouse.held){
+        return;
+    }
+    spawn = {x : Mouse.clickPos.x * resolution, y : Mouse.clickPos.y * resolution, z : 0};
+    vel = {x : (Mouse.pos.x - Mouse.clickPos.x) * velMag, y : (Mouse.pos.y - Mouse.clickPos.y) * velMag};
+    AddToSmoke(spawn, radius, vel.x, vel.y);
+}
+function InputFollow(){
+    if (!Mouse.moving){
+        return;
+    }
+    spawn = {x : Mouse.pos.x * resolution, y : Mouse.pos.y * resolution, z : 0};
+    vel = { x : 0, y : velMag};
+    AddToSmoke(spawn, radius, vel.x, vel.y);
 }
 function IX(x, y){
     return (y) * (resolution+2) + x;
@@ -638,7 +685,15 @@ function CPUStart() {
 
 function SmokeUpdate() {
     AdvectUpdate();
-    //AddSource();
+    switch(sourceMode){
+        case 0:
+            break;
+        case 1:
+            AddSource();
+            break;
+        default:
+            break;
+    }
     Diffuse();
     VelUpdate();
     TextureUpdate();
@@ -818,6 +873,7 @@ function set_bnd(b, x) {
 }
 function initializeSmokeSim(){
     try{
+        smokeOptHolder = getElementSafely("controls-bar");
         smokeVideo = getElementSafely("smoke-vid");
         scene = new THREE.Scene();
 
@@ -867,34 +923,51 @@ function initializeSmokeSim(){
         window.addEventListener('resize', (evt) => {
             resizeScene();
         });
-        const home = document.querySelector('#home');
+        const home = canvas;
         home.addEventListener('mousedown', (evt) => {
-            clickPos = getMousePos(evt);
-            spawnPos = clickPos;
-            held = true;
+            Mouse.clickPos = getMousePos(evt);
+            Mouse.held = true;
         });
         home.addEventListener("mousemove", (evt) => {
-            clickPos = getMousePos(evt);
+            if (!Mouse.first){
+                Mouse.lastPos = Mouse.pos;
+            }
+            Mouse.pos = getMousePos(evt);
+            if (Mouse.first){
+                Mouse.lastPos = Mouse.pos;
+                Mouse.first = false;
+            }
+            Mouse.deltaMousePos = {x : Mouse.pos.x - Mouse.lastPos.x, y : Mouse.pos.y - Mouse.lastPos.y};
+            Mouse.moving = true;
+            Mouse.lastMoveTime = performance.now() / 1000;
         });
         home.addEventListener('mouseup', (evt) => {
-            held = false;
+            Mouse.held = false;
         });
         home.addEventListener('touchstart', (evt) =>{
             const touch = evt.touches[0];
-            clickPos = getMousePos(touch);
-            spawnPos = clickPos;
-            held = true;
+            Mouse.clickPos = getMousePos(touch);
+            Mouse.held = true;
         });
         home.addEventListener('touchmove', (evt) =>{
             const touch = evt.touches[0];
-            clickPos = getMousePos(touch);
-            console.log('Touch move:', touch.clientX, touch.clientY);
+            if (!Mouse.first){
+                Mouse.lastPos = Mouse.pos;
+            }
+            Mouse.pos = getMousePos(touch);
+            if (Mouse.first){
+                Mouse.lastPos = Mouse.pos;
+                Mouse.first = false;
+            }
+            Mouse.deltaMousePos = {x : Mouse.pos.x - Mouse.lastPos.x, y : Mouse.pos.y - Mouse.lastPos.y};
+            Mouse.moving = true;
+            Mouse.lastMoveTime = performance.now() / 1000;
         });
         home.addEventListener('touchend', (evt) =>{
-            held = false;
+            Mouse.held = false;
         });
         safeAddClass(canvas, "shown");
-        animate();
+        requestAnimationFrame(animate);
         console.log('Smoke Sim initialized successfully');
     }
     catch(error){
@@ -910,9 +983,83 @@ function initializeSmokeSim(){
 function getMousePos(event) {
     const rect = canvas.getBoundingClientRect();
     return {
-        x: (event.clientX - rect.left) / (rect.right - rect.left),
-        y: (event.clientY - rect.top) / (rect.bottom - rect.top)
+        x: ((event.clientX - rect.left) / (rect.right - rect.left)),
+        y: (1 - (event.clientY - rect.top) / (rect.bottom - rect.top))
     };
+}
+// =============== SMOKE SIM FORM ===============
+function initializeSmokeFormHandling() {
+    try {
+        const form = getElementSafely('smokeForm');
+        if (!form) {
+            console.warn('Smke form not found');
+            return;
+        }
+
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            try {
+                const formData = new FormData(this);
+                const data = Object.fromEntries(formData.entries());
+                // Validate required fields
+                const requiredFields = ['diffusion', 'viscocity', 'density', 'radius', 'input', 'source', 'velocity'];
+                const missingFields = requiredFields.filter(field => !data[field] || data[field].trim() === '');
+                
+                if (missingFields.length > 0) {
+                    console.error('Missing required fields:', missingFields);
+                    alert('Please fill in all required fields.');
+                    return;
+                }
+
+                diff = parseFloat(data.diffusion) * 0.001;
+                visc = parseFloat(data.viscocity) * 0.0001;
+                darkAmp = parseFloat(data.density) * 10;
+                radius = parseFloat(data.radius) * 0.1;
+                velMag = parseFloat(data.velocity) * 20;
+                inputMode = parseInt(data.input);
+                sourceMode = parseInt(data.source);
+            }
+            catch(error){
+                console.error('Error sending smoke form:', error);
+                alert('Error setting parameters. Please try again.');
+            }
+        });
+        
+        console.log('Smoke form handling initialized successfully');
+    } catch (error) {
+        console.error('Error initializing smoke form handling:', error);
+    }
+}
+function RestartSim(){
+    densities.fill(0);
+    oldDensities.fill(0);
+    vX.fill(0);
+    vY.fill(0);
+    oldvX.fill(0);
+    oldvY.fill(0);
+    pressure.fill(0);
+    div.fill(0);
+    colors.fill(0);
+    smokeTexture.needsUpdate = true;
+}
+function SmokeOpenClose(){
+    try{
+        if (inAnim){
+        return;
+        }
+        if (open){
+            safeRemoveClass(smokeOptHolder, "shown-controls");
+        }
+        else{
+            safeAddClass(smokeOptHolder, "shown-controls");
+        }
+        open = !open;
+    }
+    catch(error){
+        console.error("Error opening/closing smoke controls, ", error);
+    }
+    
 }
 // =============== CLEANUP ===============
 function cleanup() {
@@ -947,6 +1094,7 @@ document.addEventListener('DOMContentLoaded', function() {
         initializeTypewriter();
         initializeFormHandling();
         initializeSmokeSim();
+        initializeSmokeFormHandling();
         console.log('Application initialized successfully');
     } catch (error) {
         console.error('Error during application initialization:', error);
@@ -958,3 +1106,6 @@ window.addEventListener('beforeunload', cleanup);
 window.Swap = Swap;
 window.OpenCard = OpenCard;
 window.CloseCard = CloseCard;
+window.RestartSim = RestartSim;
+window.ShowInfo = ShowInfo;
+window.SmokeOpenClose = SmokeOpenClose;

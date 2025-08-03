@@ -47,6 +47,54 @@
     </div>
     <div id = "border"></div>
     <div class = "section shown non-clipped active" id = "home">
+        <div id = "controls-bar">
+            <button class = "smoke-but" onclick = "SmokeOpenClose()"></button>
+            <div class = "controls-container">
+                <h1 class = "intro">Smoke</h1>
+                <form id = "smokeForm">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="diffusion">Diffusion Multiplier</label>
+                            <input type="number" step = "0.1" min = "0" max = "10" id="diffusion" name="diffusion" placeholder="1" value = "1" required >
+                        </div>
+                        <div class="form-group">
+                            <label for="viscocity">Viscocity Multiplier</label>
+                            <input type="number" step = "0.1" min = "0" max = "10" id="viscocity" name="viscocity" placeholder="1" value = "1" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="density">Density Multiplier</label>
+                            <input type="number" step = "0.1" min = "0" max = "10" id="density" name="density" placeholder="1" value = "1" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="velocity">Velocity Multiplier</label>
+                            <input type="number" step = "0.1" min = "0" max = "5" id="velocity" name="velocity" placeholder="1" value = "1" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="radius">Radius Multiplier</label>
+                            <input type="number" step = "0.1" min = "0" max = "10" id="radius" name="radius" placeholder="1" value = "1" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="input">Dynamic Source</label>
+                            <select id="input" name="input" required>
+                                <option value="0">Follow</option>
+                                <option value="1">Drop and Drag</option>
+                                <option value="2">Disabled</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="source">Static Source</label>
+                            <select id="source" name="source" required>
+                                <option value="0">Disabled</option>
+                                <option value="1">Enabled</option>
+                            </select>
+                        </div>
+                    </div>
+                    <button type="submit" class="submit-btn">Apply</button>
+                    <button class="submit-btn" id = "restart" onclick = "RestartSim()">Restart Sim</button>
+                    <button type="reset" class="submit-btn">Reset Values</button>
+                </form>
+            </div>
+        </div>
         <!--Default-->
         <video autoplay muted id = "smoke-vid">
             <source src = "{{ url_for('static', filename='images/smokemp4.mp4') }}" type = "video/mp4"/>

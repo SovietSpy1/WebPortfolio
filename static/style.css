@@ -269,14 +269,51 @@ canvas{
 .non-clipped{
     clip-path: inset(0 0% 0% 0%) !important;
 }
-
+.shown-controls{
+    transform: translateX(0%) !important;
+}
 /* =============== HOME SECTION STYLES =================*/
 #home{
     height: 100vh;
 }
-#home *{
-    pointer-events: none;
-    user-select: none;
+#home .smoke-but{
+    width: 80px;
+    height: 60px;
+    position: absolute;
+    top: 60px;
+    left: calc(100% + 10px);
+    background: transparent;
+    backdrop-filter: blur(10px);
+    box-shadow: 0;
+    border-radius: 20px;
+    border: 0px;
+    box-shadow: 0px 0px 10px rgb(var(--accent-color));
+}
+#home #controls-bar{
+    position: absolute;
+    display: flex;
+    z-index: 1;
+    height: 100vh;
+    width: 200px;
+    transform: translateX(-100%);
+    top: 0px;
+    left: 0px;
+    padding:50px 20px;
+    flex-direction: column;
+    justify-content: center;
+    background: rgba(var(--project-card-color), 0.8);
+    backdrop-filter: blur(10px);
+    transition: transform 1s ease-in-out;
+}
+#home .controls-container{
+    height: 100%;
+    overflow: scroll;
+    display: flex;
+    flex-direction: column;
+}
+#home .form-row{
+    display: grid;
+    grid-template-columns: 1fr;
 }
 #home video{
     position: absolute;
@@ -298,6 +335,8 @@ canvas{
     box-sizing: border-box;
     justify-content: center;
     align-items: center;
+    pointer-events: none;
+    user-select: none;
 }
 
 #home .container{
@@ -326,9 +365,11 @@ canvas{
 }
 
 #typewriter::after{
+    mix-blend-mode: darken;
     content: "";
     position: absolute;
     display: inline-block;
+    mix-blend-mode: normal;
     width: var(--typing-width);
     height: 1em;
     background-color: rgb(var(--accent-color));
@@ -875,8 +916,7 @@ canvas{
     border: 1px solid rgba(255, 255, 255, 0.1);
     background: rgb(var(--project-card-color));
 }
-
-#contact .contact-form h2 {
+.contact-form h2 {
     margin-bottom: 30px;
     font-size: 2rem;
     color: rgb(var(--base-color));
@@ -889,11 +929,11 @@ canvas{
     margin-bottom: 20px;
 }
 
-#contact .form-group {
+.form-group {
     margin-bottom: 20px;
 }
 
-#contact .form-group label {
+.form-group label {
     display: block;
     margin-bottom: 8px;
     font-size: 0.95rem;
@@ -901,9 +941,9 @@ canvas{
     color: rgb(var(--base-color));
 }
 
-#contact .form-group input,
-#contact .form-group textarea,
-#contact .form-group select {
+.form-group input,
+.form-group textarea,
+.form-group select {
     width: 100%;
     padding: 15px;
     border-radius: 10px;
@@ -914,35 +954,35 @@ canvas{
     transition: all 0.3s ease;
 }
 
-#contact .form-group input:focus,
-#contact .form-group textarea:focus,
-#contact .form-group select:focus {
+.form-group input:focus,
+.form-group textarea:focus,
+.form-group select:focus {
     outline: none;
     border-color: rgb(var(--accent-color));
     box-shadow: 0 0 0 3px rgba(var(--accent-color), 0.1);
     background: rgba(255, 255, 255, 0.15);
 }
 
-#contact .form-group input::placeholder,
-#contact .form-group textarea::placeholder {
+.form-group input::placeholder,
+.form-group textarea::placeholder {
     color: #999999;
 }
 
-#contact .form-group select {
+.form-group select {
     cursor: pointer;
 }
 
-#contact .form-group select option {
+.form-group select option {
     background: #2d2d2d;
     color: rgb(var(--base-color));
 }
 
-#contact .form-group textarea {
+.form-group textarea {
     resize: vertical;
     min-height: 120px;
 }
 
-#contact .submit-btn {
+.submit-btn {
     width: 100%;
     padding: 18px;
     margin-top: 10px;
@@ -956,12 +996,12 @@ canvas{
     transition: all 0.3s ease;
 }
 
-#contact .submit-btn:hover {
+.submit-btn:hover {
     transform: translateY(-2px);
     box-shadow: 0 15px 30px rgba(var(--accent-color), 0.3);
 }
 
-#contact .submit-btn:active {
+.submit-btn:active {
     transform: translateY(0);
 }
 
